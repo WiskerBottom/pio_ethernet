@@ -1,0 +1,69 @@
+;
+; Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
+;
+; SPDX-License-Identifier: BSD-3-Clause
+;
+.pio_version 0 // only requires PIO version 0
+
+.program hello
+
+mov x, !null    ; Pre-load X with 0xFFFFFFFF
+
+low:
+    jmp pin, high_transition //if we see a 1, jump to the high section
+    jmp low //if we didn't see a 1, go back to the low loop
+
+high_transition:
+    in x, 32 //since we were seeing a 0 then saw 1, this indicates rising edge so we add a 1 to ISR
+    push
+high:
+    jmp pin, high //check if we are still seeing 1, if we are continue in high loop
+    in NULL, 32 //if we didn't see a 1, then we saw a falling edge from 1-0 so we go back to low
+    push
+    jmp low //go back to low loop
+
+
+
+
+
+
+% c-sdk {
+static inline void hello_program_init(PIO pio, uint sm, uint offset, uint input_pin) {
+    pio_sm_config c = hello_program_get_default_config(offset);
+    pio_gpio_init(pio, input_pin);
+
+    //set up the jump pin to be using input_pin
+    sm_config_set_jmp_pin(&c, input_pin);
+
+    //setup autopull and autopush
+    //sm_config_set_out_shift(&c, false, true, 2); //false, true here means shift MSB out first and autopush enabled
+    //sm_config_set_in_shift(&c, false, true, 2);
+
+    //sm_config_set_out_pins(&c, input_pin, 1);
+
+    // Load our configuration, and jump to the start of the program
+    pio_sm_init(pio, sm, offset, &c);
+
+    pio_sm_set_consecutive_pindirs(pio, sm, input_pin, 1, false);
+
+    // Set the state machine running
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}
+
+/*
+
+main_loop:
+    jmp pin, send_ones  ; If pin is High, go to the 'ones' section
+    
+send_zeros:
+    mov isr, null       ; Put 0s in ISR
+    push block          ; Send 00000000
+    jmp main_loop       ; Check pin again
+
+send_ones:
+    mov isr, x          ; Put 1s in ISR
+    push block          ; Send FFFFFFFF
+    jmp main_loop       ; Check pin again
+
+*/

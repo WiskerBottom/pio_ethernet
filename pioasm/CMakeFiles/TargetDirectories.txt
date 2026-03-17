@@ -1,0 +1,7 @@
+/home/florence/Documents/Programs/Python/RaspberryPiPico/pio_ethernet/pioasm/CMakeFiles/pioasm.dir
+/home/florence/Documents/Programs/Python/RaspberryPiPico/pio_ethernet/pioasm/CMakeFiles/edit_cache.dir
+/home/florence/Documents/Programs/Python/RaspberryPiPico/pio_ethernet/pioasm/CMakeFiles/rebuild_cache.dir
+/home/florence/Documents/Programs/Python/RaspberryPiPico/pio_ethernet/pioasm/CMakeFiles/list_install_components.dir
+/home/florence/Documents/Programs/Python/RaspberryPiPico/pio_ethernet/pioasm/CMakeFiles/install.dir
+/home/florence/Documents/Programs/Python/RaspberryPiPico/pio_ethernet/pioasm/CMakeFiles/install/local.dir
+/home/florence/Documents/Programs/Python/RaspberryPiPico/pio_ethernet/pioasm/CMakeFiles/install/strip.dir
