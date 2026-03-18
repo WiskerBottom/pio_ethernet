@@ -13,7 +13,7 @@
 // ----- //
 
 #define hello_wrap_target 0
-#define hello_wrap 8
+#define hello_wrap 6
 #define hello_pio_version 0
 
 static const uint16_t hello_program_instructions[] = {
@@ -21,19 +21,17 @@ static const uint16_t hello_program_instructions[] = {
     0xa02b, //  0: mov    x, ~null
     0x00c3, //  1: jmp    pin, 3
     0x0001, //  2: jmp    1
-    0x4020, //  3: in     x, 32
-    0x8020, //  4: push   block
-    0x00c5, //  5: jmp    pin, 5
-    0x4060, //  6: in     null, 32
-    0x8020, //  7: push   block
-    0x0001, //  8: jmp    1
+    0x4021, //  3: in     x, 1
+    0x00c4, //  4: jmp    pin, 4
+    0x4061, //  5: in     null, 1
+    0x0001, //  6: jmp    1
             //     .wrap
 };
 
 #if !PICO_NO_HARDWARE
 static const struct pio_program hello_program = {
     .instructions = hello_program_instructions,
-    .length = 9,
+    .length = 7,
     .origin = -1,
     .pio_version = hello_pio_version,
 #if PICO_PIO_VERSION > 0
@@ -53,8 +51,8 @@ static inline void hello_program_init(PIO pio, uint sm, uint offset, uint input_
     //set up the jump pin to be using input_pin
     sm_config_set_jmp_pin(&c, input_pin);
     //setup autopull and autopush
-    //sm_config_set_out_shift(&c, false, true, 2); //false, true here means shift MSB out first and autopush enabled
-    //sm_config_set_in_shift(&c, false, true, 2);
+    sm_config_set_out_shift(&c, false, true, 32); //false, true here means shift MSB out first and autopush enabled
+    sm_config_set_in_shift(&c, false, true, 32);
     //sm_config_set_out_pins(&c, input_pin, 1);
     // Load our configuration, and jump to the start of the program
     pio_sm_init(pio, sm, offset, &c);

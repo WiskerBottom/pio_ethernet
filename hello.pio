@@ -14,12 +14,12 @@ low:
     jmp low //if we didn't see a 1, go back to the low loop
 
 high_transition:
-    in x, 32 //since we were seeing a 0 then saw 1, this indicates rising edge so we add a 1 to ISR
-    push
+    in x, 1 [6] //since we were seeing a 0 then saw 1, this indicates rising edge so we add a 1 to ISR
+                // the reason for the [6] is to add the 60 ns delay between readings. this is 8 clocks, 1 from the jump, one from the read, and then 6 additional waits here
 high:
     jmp pin, high //check if we are still seeing 1, if we are continue in high loop
-    in NULL, 32 //if we didn't see a 1, then we saw a falling edge from 1-0 so we go back to low
-    push
+    in NULL, 1 [5] //if we didn't see a 1, then we saw a falling edge from 1-0 so we go back to low
+                   //the reason for the [5] is to add the 60 ns delay between readings. This is 8 blocks, 1 from jmp pin, 1 from in NULL, 5 additional waits, then the jump to low.
     jmp low //go back to low loop
 
 
@@ -36,8 +36,8 @@ static inline void hello_program_init(PIO pio, uint sm, uint offset, uint input_
     sm_config_set_jmp_pin(&c, input_pin);
 
     //setup autopull and autopush
-    //sm_config_set_out_shift(&c, false, true, 2); //false, true here means shift MSB out first and autopush enabled
-    //sm_config_set_in_shift(&c, false, true, 2);
+    sm_config_set_out_shift(&c, false, true, 32); //false, true here means shift MSB out first and autopush enabled
+    sm_config_set_in_shift(&c, false, true, 32);
 
     //sm_config_set_out_pins(&c, input_pin, 1);
 
